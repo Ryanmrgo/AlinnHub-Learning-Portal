@@ -109,3 +109,21 @@ For Stripe webhooks:
 1. Go to Stripe Dashboard → Webhooks  
 2. Add endpoint: `https://yourdomain.com/api/webhooks/stripe`
 3. Subscribe to: `payment_intent.succeeded`, `payment_intent.payment_failed`
+
+////create .env.localfile in root of this file and copy paste the following code
+
+MONGODB_URI="mongodb+srv://pyaesone:pyaesone123@cluster0.2psuhui.mongodb.net/?appName=Cluster0"
+CURRENCY="USD"
+NEXT_PUBLIC_CURRENCY="$"
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="pk_test_ZmxleGlibGUtaGF3ay01NS5jbGVyay5hY2NvdW50cy5kZXYk"
+CLERK_SECRET_KEY="sk_test_5s81LYlX7Hmd53bkUx4CQ4zWGOtTs2TI2Nyu6Ieuib"
+
+CLOUDINARY_NAME="dy11dffoc"
+CLOUDINARY_API_KEY="938698419742869"
+CLOUDINARY_SECRET_KEY="ILlwLflKN5-SWLTnwf8qENRuoG8"
+
+CLERK_WEBHOOK_SECRET="whsec_cENzxr/yDgMZdEkafDfj0TTvUVsICMWx"
+
+STRIPE_WEBHOOK_SECRET="----- Stripe Webhook Secret -----"
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY="----- Stripe Publishable Key -----"
+STRIPE_SECRET_KEY="----- Stripe Secret Key -----"
