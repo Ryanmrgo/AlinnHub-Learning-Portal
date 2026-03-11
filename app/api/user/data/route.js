@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs/server';
+import { auth, currentUser } from '@clerk/nextjs/server';
 import connectDB from '@/lib/mongodb';
 import User from '@/lib/models/User';
 
@@ -13,7 +13,25 @@ export async function GET() {
 
         await connectDB();
 
-        const user = await User.findById(userId);
+        let user = await User.findById(userId);
+
+        // If no local user exists yet, create one from Clerk data
+        if (!user) {
+            const clerkUser = await currentUser();
+
+            if (!clerkUser) {
+                return NextResponse.json({ success: false, message: 'User Not Found' });
+            }
+
+            const userData = {
+                _id: clerkUser.id,
+                email: clerkUser.emailAddresses?.[0]?.emailAddress || '',
+                name: `${clerkUser.firstName || ''} ${clerkUser.lastName || ''}`.trim(),
+                imageUrl: clerkUser.imageUrl || '',
+            };
+
+            user = await User.create(userData);
+        }
 
         if (!user) {
             return NextResponse.json({ success: false, message: 'User Not Found' });

@@ -7,7 +7,6 @@ A comprehensive Learning Management System built with Next.js, MongoDB, and Cler
 - **Frontend & Backend**: Next.js 14 (App Router)
 - **Database**: MongoDB with Mongoose
 - **Authentication**: Clerk
-- **Payment**: Stripe
 - **File Upload**: Cloudinary
 - **Styling**: Tailwind CSS
 
@@ -66,10 +65,7 @@ CLOUDINARY_NAME="your-cloudinary-name"
 CLOUDINARY_API_KEY="your-cloudinary-api-key"
 CLOUDINARY_SECRET_KEY="your-cloudinary-secret-key"
 
-# Stripe
-STRIPE_SECRET_KEY="your-stripe-secret-key"
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY="your-stripe-publishable-key"
-STRIPE_WEBHOOK_SECRET="your-stripe-webhook-secret"
+# (Stripe has been removed; no payment keys required currently.)
 ```
 
 ### 3. Run Development Server

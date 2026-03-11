@@ -49,7 +49,6 @@ Copy the `.env.local` file and update with your credentials:
 - MongoDB URI
 - Clerk keys
 - Cloudinary credentials
-- Stripe keys
 
 ## Directory Overview
 
@@ -105,11 +104,6 @@ For Clerk webhooks:
 2. Add endpoint: `https://yourdomain.com/api/webhooks/clerk`
 3. Subscribe to: `user.created`, `user.updated`, `user.deleted`
 
-For Stripe webhooks:
-1. Go to Stripe Dashboard → Webhooks  
-2. Add endpoint: `https://yourdomain.com/api/webhooks/stripe`
-3. Subscribe to: `payment_intent.succeeded`, `payment_intent.payment_failed`
-
 ////create .env.localfile in root of this file and copy paste the following code
 
 MONGODB_URI="mongodb+srv://pyaesone:pyaesone123@cluster0.2psuhui.mongodb.net/?appName=Cluster0"
@@ -123,7 +117,3 @@ CLOUDINARY_API_KEY="938698419742869"
 CLOUDINARY_SECRET_KEY="ILlwLflKN5-SWLTnwf8qENRuoG8"
 
 CLERK_WEBHOOK_SECRET="whsec_cENzxr/yDgMZdEkafDfj0TTvUVsICMWx"
-
-STRIPE_WEBHOOK_SECRET="----- Stripe Webhook Secret -----"
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY="----- Stripe Publishable Key -----"
-STRIPE_SECRET_KEY="----- Stripe Secret Key -----"

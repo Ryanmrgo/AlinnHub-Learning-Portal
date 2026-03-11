@@ -11,6 +11,7 @@ import { toast } from 'react-toastify';
 import Rating from '@/components/student/Rating';
 import Footer from '@/components/student/Footer';
 import Loading from '@/components/student/Loading';
+import Navbar from '@/components/student/Navbar';
 
 const extractYoutubeVideoId = (url) => {
   if (!url) return '';
@@ -157,7 +158,8 @@ const Player = ({ }) => {
 
   return courseData ? (
     <>
-    
+    <Navbar />
+
     <div className='p-4 sm:p-10 flex flex-col-reverse md:grid md:grid-cols-2 gap-10 md:px-36' >
       <div className=" text-gray-800" >
         <h2 className="text-xl font-semibold">Course Structure</h2>

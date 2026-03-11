@@ -48,8 +48,16 @@ const CourseDetails = () => {
   const [courseData, setCourseData] = useState(null)
   const [playerData, setPlayerData] = useState(null)
   const [isAlreadyEnrolled, setIsAlreadyEnrolled] = useState(false)
+  const [showEnrollForm, setShowEnrollForm] = useState(false)
+  const [formData, setFormData] = useState({
+    fullName: '',
+    age: '',
+    education: '',
+    reason: '',
+    additionalInfo: '',
+  })
 
-  const { currency, userData, calculateChapterTime, calculateCourseDuration, calculateRating, calculateNoOfLectures } = useContext(AppContext)
+  const { userData, isEducator, calculateChapterTime, calculateCourseDuration, calculateRating, calculateNoOfLectures } = useContext(AppContext)
   const { getToken } = useAuth()
 
 
@@ -83,7 +91,13 @@ const CourseDetails = () => {
   };
 
 
-  const enrollCourse = async () => {
+  const handleChange = (e) => {
+    const { name, value } = e.target
+    setFormData((prev) => ({ ...prev, [name]: value }))
+  }
+
+  const submitEnrollmentRequest = async (e) => {
+    e.preventDefault()
 
     try {
 
@@ -95,16 +109,34 @@ const CourseDetails = () => {
         return toast.warn('Already Enrolled')
       }
 
-      const token = await getToken();
+      if (!formData.fullName || !formData.age || !formData.education || !formData.reason) {
+        return toast.warn('Please fill in all required fields')
+      }
 
-      const { data } = await axios.post('/api/user/purchase',
-        { courseId: courseData._id },
-        { headers: { Authorization: `Bearer ${token}` } }
+      const token = await getToken();
+      const payload = {
+        courseId: courseData._id,
+        studentName: String(formData.fullName ?? '').trim(),
+        age: formData.age === '' ? null : Number(formData.age),
+        education: String(formData.education ?? '').trim(),
+        reason: String(formData.reason ?? '').trim(),
+        additionalInfo: String(formData.additionalInfo ?? '').trim(),
+      }
+
+      const { data } = await axios.post(
+        '/api/user/purchase',
+        payload,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        }
       )
 
       if (data.success) {
-        const { session_url } = data
-        window.location.replace(session_url)
+        toast.success(data.message || 'Enrollment request sent')
+        setShowEnrollForm(false)
       } else {
         toast.error(data.message)
       }
@@ -205,16 +237,11 @@ const CourseDetails = () => {
               : <img src={courseData.courseThumbnail} alt="" />
           }
           <div className="p-5">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 mb-2">
               <img className="w-3.5" src={assets.time_left_clock_icon} alt="time left clock icon" />
-              <p className="text-red-500">
-                <span className="font-medium">5 days</span> left at this price!
+              <p className="text-green-600 font-medium">
+                This course is free for all AlinHub students.
               </p>
-            </div>
-            <div className="flex gap-3 items-center pt-2">
-              <p className="text-gray-800 md:text-4xl text-2xl font-semibold">{currency}{(courseData.coursePrice - courseData.discount * courseData.coursePrice / 100).toFixed(2)}</p>
-              <p className="md:text-lg text-gray-500 line-through">{currency}{courseData.coursePrice}</p>
-              <p className="md:text-lg text-gray-500">{courseData.discount}% off</p>
             </div>
             <div className="flex items-center text-sm md:text-default gap-4 pt-2 md:pt-4 text-gray-500">
               <div className="flex items-center gap-1">
@@ -232,9 +259,88 @@ const CourseDetails = () => {
                 <p>{calculateNoOfLectures(courseData)} lessons</p>
               </div>
             </div>
-            <button onClick={enrollCourse} className="md:mt-6 mt-4 w-full py-3 rounded bg-blue-600 text-white font-medium">
-              {isAlreadyEnrolled ? "Already Enrolled" : "Enroll Now"}
-            </button>
+
+            {!isEducator && (
+              <>
+                <button
+                  onClick={() => {
+                    if (!userData) {
+                      toast.warn('Login to Enroll')
+                      return
+                    }
+                    if (isAlreadyEnrolled) {
+                      toast.warn('Already Enrolled')
+                      return
+                    }
+                    setShowEnrollForm((prev) => !prev)
+                  }}
+                  className="md:mt-6 mt-4 w-full py-3 rounded bg-blue-600 text-white font-medium"
+                >
+                  {isAlreadyEnrolled ? 'Already Enrolled' : showEnrollForm ? 'Close Form' : 'Request Access'}
+                </button>
+
+                {showEnrollForm && (
+                  <form onSubmit={submitEnrollmentRequest} className="mt-4 space-y-3 text-sm">
+                    <div>
+                      <label className="block text-gray-700 mb-1">Full Name *</label>
+                      <input
+                        type="text"
+                        name="fullName"
+                        value={formData.fullName}
+                        onChange={handleChange}
+                        className="w-full border border-gray-300 rounded px-3 py-2"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-gray-700 mb-1">Age *</label>
+                      <input
+                        type="number"
+                        name="age"
+                        value={formData.age}
+                        onChange={handleChange}
+                        className="w-full border border-gray-300 rounded px-3 py-2"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-gray-700 mb-1">Educational Background *</label>
+                      <input
+                        type="text"
+                        name="education"
+                        value={formData.education}
+                        onChange={handleChange}
+                        className="w-full border border-gray-300 rounded px-3 py-2"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-gray-700 mb-1">Why do you want to enroll in this class? *</label>
+                      <textarea
+                        name="reason"
+                        value={formData.reason}
+                        onChange={handleChange}
+                        rows={3}
+                        className="w-full border border-gray-300 rounded px-3 py-2 resize-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-gray-700 mb-1">Additional Information (optional)</label>
+                      <textarea
+                        name="additionalInfo"
+                        value={formData.additionalInfo}
+                        onChange={handleChange}
+                        rows={2}
+                        className="w-full border border-gray-300 rounded px-3 py-2 resize-none"
+                      />
+                    </div>
+                    <button
+                      type="submit"
+                      className="w-full py-2 rounded bg-blue-600 text-white font-medium mt-2"
+                    >
+                      Submit Request
+                    </button>
+                  </form>
+                )}
+              </>
+            )}
             <div className="pt-6">
               <p className="md:text-xl text-lg font-medium text-gray-800">What's in the course?</p>
               <ul className="ml-4 pt-2 text-sm md:text-default list-disc text-gray-500">

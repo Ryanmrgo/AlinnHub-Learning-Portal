@@ -7,9 +7,7 @@ import { AppContext } from '@/app/context/AppContext'
 
 const CourseCard = ({ course }) => {
 
-    const { currency, calculateRating, calculateNoOfLectures, calculateCourseDuration, wishlistCourses, toggleWishlistCourse } = useContext(AppContext)
-
-    const discountedPrice = (course.coursePrice - course.discount * course.coursePrice / 100).toFixed(2)
+    const { calculateRating, calculateNoOfLectures, calculateCourseDuration, wishlistCourses, toggleWishlistCourse } = useContext(AppContext)
     const isWishlisted = wishlistCourses.some((item) => item._id === course._id)
 
     return (
@@ -50,11 +48,6 @@ const CourseCard = ({ course }) => {
                 <div className='mt-2 flex items-center justify-between text-xs text-gray-500'>
                     <span>{calculateCourseDuration(course)}</span>
                     <span>{course.enrolledStudents?.length ?? 0} learners</span>
-                </div>
-                <div className='mt-3 flex items-center gap-2'>
-                    <p className="text-base font-semibold text-gray-800">{currency}{discountedPrice}</p>
-                    {course.discount > 0 && <p className='text-xs text-gray-400 line-through'>{currency}{course.coursePrice}</p>}
-                    {course.discount > 0 && <span className='text-xs text-green-700 bg-green-100 px-2 py-1 rounded'>{course.discount}% OFF</span>}
                 </div>
             </div>
         </Link>

@@ -22,6 +22,17 @@ export const AppContextProvider = ({ children }) => {
     const [enrolledCourses, setEnrolledCourses] = useState([])
     const [wishlistCourses, setWishlistCourses] = useState([])
 
+    const handleAxiosError = (error) => {
+        // Ignore canceled/aborted requests (common during navigation or sign in)
+        if (axios.isCancel?.(error) || error.code === 'ERR_CANCELED' || error.name === 'CanceledError') {
+            return
+        }
+        if (typeof error.message === 'string' && error.message.toLowerCase().includes('aborted')) {
+            return
+        }
+        toast.error(error.message)
+    }
+
     // Fetch All Courses
     const fetchAllCourses = async () => {
         try {
@@ -33,7 +44,7 @@ export const AppContextProvider = ({ children }) => {
                 toast.error(data.message)
             }
         } catch (error) {
-            toast.error(error.message)
+            handleAxiosError(error)
         }
     }
 
@@ -55,7 +66,7 @@ export const AppContextProvider = ({ children }) => {
                 toast.error(data.message)
             }
         } catch (error) {
-            toast.error(error.message)
+            handleAxiosError(error)
         }
     }
 
@@ -73,7 +84,7 @@ export const AppContextProvider = ({ children }) => {
                 toast.error(data.message)
             }
         } catch (error) {
-            toast.error(error.message)
+            handleAxiosError(error)
         }
     }
 
@@ -90,7 +101,7 @@ export const AppContextProvider = ({ children }) => {
                 toast.error(data.message)
             }
         } catch (error) {
-            toast.error(error.message)
+            handleAxiosError(error)
         }
     }
 
@@ -116,7 +127,7 @@ export const AppContextProvider = ({ children }) => {
             toast.error(data.message)
             return false
         } catch (error) {
-            toast.error(error.message)
+            handleAxiosError(error)
             return false
         }
     }

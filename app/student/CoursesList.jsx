@@ -17,10 +17,7 @@ const CoursesList = () => {
 
     const [filteredCourse, setFilteredCourse] = useState([])
     const [sortBy, setSortBy] = useState('popular')
-    const [priceFilter, setPriceFilter] = useState('all')
     const [ratingFilter, setRatingFilter] = useState('all')
-
-    const getDiscountedPrice = (course) => Number((course.coursePrice - course.discount * course.coursePrice / 100).toFixed(2))
 
     const getCategory = (title = '') => {
         const lower = title.toLowerCase()
@@ -42,35 +39,28 @@ const CoursesList = () => {
                 )
             }
 
-            if (priceFilter === 'under50') {
-                tempCourses = tempCourses.filter((item) => getDiscountedPrice(item) < 50)
-            } else if (priceFilter === '50to100') {
-                tempCourses = tempCourses.filter((item) => getDiscountedPrice(item) >= 50 && getDiscountedPrice(item) <= 100)
-            } else if (priceFilter === 'above100') {
-                tempCourses = tempCourses.filter((item) => getDiscountedPrice(item) > 100)
-            }
-
             if (ratingFilter === '4plus') {
                 tempCourses = tempCourses.filter((item) => calculateRating(item) >= 4)
             } else if (ratingFilter === '3plus') {
                 tempCourses = tempCourses.filter((item) => calculateRating(item) >= 3)
             }
 
-            if (sortBy === 'priceLowToHigh') {
-                tempCourses.sort((a, b) => getDiscountedPrice(a) - getDiscountedPrice(b))
-            } else if (sortBy === 'priceHighToLow') {
-                tempCourses.sort((a, b) => getDiscountedPrice(b) - getDiscountedPrice(a))
-            } else if (sortBy === 'ratingHighToLow') {
+            if (sortBy === 'ratingHighToLow') {
                 tempCourses.sort((a, b) => calculateRating(b) - calculateRating(a))
             } else {
-                tempCourses.sort((a, b) => b.enrolledStudents.length - a.enrolledStudents.length)
+                const getEnrollCount = (course) =>
+                    Array.isArray(course.enrolledStudents) ? course.enrolledStudents.length : 0
+
+                tempCourses.sort(
+                    (a, b) => getEnrollCount(b) - getEnrollCount(a)
+                )
             }
 
             setFilteredCourse(tempCourses)
 
         }
 
-    }, [allCourses, input, sortBy, priceFilter, ratingFilter])
+    }, [allCourses, input, sortBy, ratingFilter])
 
     return (
         <>
@@ -95,14 +85,6 @@ const CoursesList = () => {
                         <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className='border border-gray-300 rounded px-3 py-2 text-sm text-gray-600'>
                             <option value="popular">Most Popular</option>
                             <option value="ratingHighToLow">Top Rated</option>
-                            <option value="priceLowToHigh">Price: Low to High</option>
-                            <option value="priceHighToLow">Price: High to Low</option>
-                        </select>
-                        <select value={priceFilter} onChange={(e) => setPriceFilter(e.target.value)} className='border border-gray-300 rounded px-3 py-2 text-sm text-gray-600'>
-                            <option value="all">All Prices</option>
-                            <option value="under50">Under $50</option>
-                            <option value="50to100">$50 - $100</option>
-                            <option value="above100">Above $100</option>
                         </select>
                         <select value={ratingFilter} onChange={(e) => setRatingFilter(e.target.value)} className='border border-gray-300 rounded px-3 py-2 text-sm text-gray-600'>
                             <option value="all">All Ratings</option>
@@ -129,7 +111,7 @@ const CoursesList = () => {
                     <div className='border border-gray-200 rounded-lg p-8 text-center text-gray-500 my-10'>
                         <p className='text-lg font-medium text-gray-700'>No courses found</p>
                         <p className='mt-2'>Try another keyword or clear your filters.</p>
-                        <button onClick={() => { setSortBy('popular'); setPriceFilter('all'); setRatingFilter('all'); router.push('/course-list') }} className='mt-4 px-4 py-2 rounded bg-blue-600 text-white'>
+                        <button onClick={() => { setSortBy('popular'); setRatingFilter('all'); router.push('/course-list') }} className='mt-4 px-4 py-2 rounded bg-blue-600 text-white'>
                             Reset Filters
                         </button>
                     </div>
