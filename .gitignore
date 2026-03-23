@@ -43,3 +43,4 @@ temp/*
 
 # Scripts
 *.ps1
+.env
