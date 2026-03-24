@@ -12,6 +12,7 @@ import Rating from '@/components/student/Rating';
 import Footer from '@/components/student/Footer';
 import Loading from '@/components/student/Loading';
 import Navbar from '@/components/student/Navbar';
+import QuizList from '@/components/student/QuizList';
 
 const extractYoutubeVideoId = (url) => {
   if (!url) return '';
@@ -201,6 +202,8 @@ const Player = ({ }) => {
           <h1 className="text-xl font-bold">Rate this Course:</h1>
           <Rating initialRating={initialRating} onRate={handleRate} />
         </div>
+
+        <QuizList courseId={courseId} />
 
       </div>
 
